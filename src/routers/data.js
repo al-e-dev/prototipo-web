@@ -9,4 +9,4 @@ exports.routes = {
         res.status(200).json(data);
     },
     error: false
-};
+}

@@ -90,7 +90,7 @@
                                 <label class="label has-text-centered has-text-grey-lighter">Tipo</label>
                                 <div class="control is-rounded has-text-centered">
                                     <div class="select">
-                                        <select id="type" onchange="toggleFields()">
+                                        <select id="type" onchange="toggleFields()" required>
                                             <option value="account">Cuenta</option>
                                             <option value="profile">Perfil</option>
                                         </select>
@@ -100,43 +100,46 @@
                             <div class="field">
                                 <label class="label has-text-centered has-text-grey-lighter">Servicio</label>
                                 <div class="control">
-                                    <input id="service" class="input is-rounded has-text-centered" type="text" placeholder="Servicio">
+                                    <input id="service" class="input is-rounded has-text-centered" type="text" placeholder="Servicio" required>
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label has-text-centered has-text-grey-lighter">Precio</label>
                                 <div class="control">
-                                    <input id="price" class="input is-rounded has-text-centered" type="number" placeholder="Precio">
+                                    <input id="price" class="input is-rounded has-text-centered" type="number" placeholder="Precio" required>
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label has-text-centered has-text-grey-lighter">Email</label>
                                 <div class="control">
-                                    <input id="email" class="input is-rounded has-text-centered" type="email" placeholder="Email">
+                                    <input id="email" class="input is-rounded has-text-centered" type="email" placeholder="Email" required>
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label has-text-centered has-text-grey-lighter">Contraseña</label>
-                                <div class="control">
-                                    <input id="password" class="input is-rounded has-text-centered" type="password" placeholder="Contraseña">
+                                <div class="control" style="text-align: center;">
+                                    <input id="password" class="input is-rounded has-text-centered" type="password" placeholder="Contraseña" required autocomplete="current-password">
+                                    <span class="icon is-small has-text-centered" onclick="togglePassword('password')">
+                                        <i class="fas fa-eye">view</i>
+                                    </span>
                                 </div>
                             </div>
                             <div class="field" id="name-field" style="display: none;">
                                 <label class="label has-text-centered has-text-grey-lighter">Nombre</label>
                                 <div class="control">
-                                    <input id="name" class="input is-rounded has-text-centered" type="text" placeholder="Nombre">
+                                    <input id="name" class="input is-rounded has-text-centered" type="text" placeholder="Nombre" required>
                                 </div>
                             </div>
                             <div class="field" id="pin-field" style="display: none;">
                                 <label class="label has-text-centered has-text-grey-lighter">PIN</label>
                                 <div class="control">
-                                    <input id="pin" class="input is-rounded has-text-centered" type="text" placeholder="PIN">
+                                    <input id="pin" class="input is-rounded has-text-centered" type="text" placeholder="PIN" required>
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label has-text-centered has-text-grey-lighter">Días de Expiración</label>
                                 <div class="control">
-                                    <input id="expiry_days" class="input is-rounded has-text-centered" type="number" value="30">
+                                    <input id="expiry_days" class="input is-rounded has-text-centered" type="number" value="30" required>
                                 </div>
                             </div>
                             <div class="field">
@@ -156,7 +159,68 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal para editar datos -->
+    <div class="modal" id="edit-modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Editar Datos</p>
+                <button class="delete" aria-label="close" onclick="closeModal()"></button>
+            </header>
+            <section class="modal-card-body">
+                <form id="edit-form">
+                    <div class="field">
+                        <label class="label">Servicio</label>
+                        <div class="control">
+                            <input id="edit-service" class="input" type="text" placeholder="Servicio" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <div class="control">
+                            <input id="edit-email" class="input" type="email" placeholder="Email" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Contraseña</label>
+                        <div class="control has-icons-right">
+                            <input id="edit-password" class="input" type="password" placeholder="Contraseña" required autocomplete="current-password">
+                            <span class="icon is-small has-text-centered" onclick="togglePassword('password')">
+                                <i class="fas fa-eye">view</i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="field" id="edit-name-field">
+                        <label class="label">Nombre</label>
+                        <div class="control">
+                            <input id="edit-name" class="input" type="text" placeholder="Nombre" required>
+                        </div>
+                    </div>
+                    <div class="field" id="edit-pin-field">
+                        <label class="label">PIN</label>
+                        <div class="control">
+                            <input id="edit-pin" class="input" type="text" placeholder="PIN" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Días de Expiración</label>
+                        <div class="control">
+                            <input id="edit-expiry_days" class="input" type="number" placeholder="Días de Expiración" required>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" onclick="saveEdit()">Guardar</button>
+                <button class="button" onclick="closeModal()">Cancelar</button>
+            </footer>
+        </div>
+    </div>
+
     <script>
+        let currentEditId = null;
+
         function toggleFields() {
             const type = document.getElementById('type').value;
             const nameField = document.getElementById('name-field');
@@ -167,6 +231,15 @@
             } else {
                 nameField.style.display = 'none';
                 pinField.style.display = 'none';
+            }
+        }
+
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
             }
         }
 
@@ -200,13 +273,16 @@
             const dataContainer = document.getElementById('data-container');
             dataContainer.innerHTML = '';
             data.forEach(item => {
+                const email = item.details.account ? item.details.account.email : item.details.profile.email;
+                const expiry_date = new Date(item.details.account ? item.details.account.expiry_date : item.details.profile.expiry_date);
+                const days_left = Math.ceil((expiry_date - new Date()) / (1000 * 60 * 60 * 24));
                 const dataItem = document.createElement('div');
                 dataItem.className = 'data-item';
                 dataItem.innerHTML = `
                     <div class="data-item-content">
-                        <span class="data-text">${item.service} (${item.type}): ${item.details.account.email}</span>
+                        <span class="data-text">${item.service} (${item.type}): ${email} - Expira en ${days_left} días</span>
                         <div class="data-buttons">
-                            <button class="button is-small is-info" onclick="editData('${item.purchase_id}')">Editar</button>
+                            <button class="button is-small is-info" onclick="openEditModal('${item.purchase_id}', '${item.type}', ${days_left})">Editar</button>
                             <button class="button is-small is-danger" onclick="deleteData('${item.purchase_id}')">Eliminar</button>
                         </div>
                     </div>
@@ -215,22 +291,53 @@
             });
         }
 
-        async function editData(id) {
-            const service = prompt('Nuevo servicio:');
-            const email = prompt('Nuevo email:');
-            const password = prompt('Nueva contraseña:');
-            const name = prompt('Nuevo nombre:');
-            const pin = prompt('Nuevo PIN:');
-            const expiry_days = prompt('Nuevos días de expiración:');
-            if (service && email && password && name && pin && expiry_days) {
-                await fetch(`/purchase/${id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ service, email, password, name, pin, expiry_days })
-                });
+        async function openEditModal(id, type, days_left) {
+            currentEditId = id;
+            const response = await fetch(`/purchase/${id}`);
+            const data = await response.json();
+            document.getElementById('edit-service').value = data.service;
+            document.getElementById('edit-email').value = data.details.account ? data.details.account.email : data.details.profile.email;
+            document.getElementById('edit-password').value = data.details.account ? data.details.account.password : '';
+            document.getElementById('edit-expiry_days').value = days_left;
+
+            if (type === 'profile') {
+                document.getElementById('edit-name').value = data.details.profile.name;
+                document.getElementById('edit-pin').value = data.details.profile.pin;
+                document.getElementById('edit-name-field').style.display = 'block';
+                document.getElementById('edit-pin-field').style.display = 'block';
+            } else {
+                document.getElementById('edit-name-field').style.display = 'none';
+                document.getElementById('edit-pin-field').style.display = 'none';
+            }
+
+            document.getElementById('edit-modal').classList.add('is-active');
+        }
+
+        function closeModal() {
+            document.getElementById('edit-modal').classList.remove('is-active');
+        }
+
+        async function saveEdit() {
+            const service = document.getElementById('edit-service').value;
+            const email = document.getElementById('edit-email').value;
+            const password = document.getElementById('edit-password').value;
+            const name = document.getElementById('edit-name').value;
+            const pin = document.getElementById('edit-pin').value;
+            const expiry_days = document.getElementById('edit-expiry_days').value;
+
+            const response = await fetch(`/purchase/${currentEditId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ service, email, password, name, pin, expiry_days })
+            });
+
+            if (response.ok) {
                 loadData();
+                closeModal();
+            } else {
+                console.error('Error al actualizar los datos');
             }
         }
 
