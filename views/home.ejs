@@ -40,6 +40,7 @@
             border: 2px dashed #fff;
             border-radius: 10px;
             margin-bottom: 10px;
+            background-color: var(--item-background);
         }
         .data-item button {
             margin-left: 10px;
@@ -117,10 +118,10 @@
                             </div>
                             <div class="field">
                                 <label class="label has-text-centered has-text-grey-lighter">Contraseña</label>
-                                <div class="control" style="text-align: center;">
+                                <div class="control has-icons-right" style="text-align: center;">
                                     <input id="password" class="input is-rounded has-text-centered" type="password" placeholder="Contraseña" required autocomplete="current-password">
-                                    <span class="icon is-small has-text-centered" onclick="togglePassword('password')">
-                                        <i class="fas fa-eye">view</i>
+                                    <span class="icon is-small is-right" onclick="togglePassword('password')" style="cursor: pointer;">
+                                        <i class="fas fa-eye"></i>
                                     </span>
                                 </div>
                             </div>
@@ -153,7 +154,7 @@
             </div>
             <div class="column is-full is-pulled-right">
                 <h1 class="title has-text-centered has-text-grey-lighter">Servicios disponibles</h1>
-                <div id="data-container">
+                <div id="data-container" class="data-list">
                     <!-- Los datos se mostrarán aquí -->
                 </div>
             </div>
@@ -184,10 +185,10 @@
                     </div>
                     <div class="field">
                         <label class="label">Contraseña</label>
-                        <div class="control has-icons-right">
+                        <div class="control has-icons-right" style="text-align: center;">
                             <input id="edit-password" class="input" type="password" placeholder="Contraseña" required autocomplete="current-password">
-                            <span class="icon is-small has-text-centered" onclick="togglePassword('password')">
-                                <i class="fas fa-eye">view</i>
+                            <span class="icon is-small is-right" onclick="togglePassword('edit-password')" style="cursor: pointer;">
+                                <i class="fas fa-eye"></i>
                             </span>
                         </div>
                     </div>
@@ -287,7 +288,6 @@
                         </div>
                     </div>
                 `;
-                dataContainer.appendChild(dataItem);
             });
         }
 
