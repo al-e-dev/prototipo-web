@@ -14,10 +14,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     margin: 0;
     font-family: 'Source Code Pro', monospace; 
-    background-color: #333;
+    background-color: var(--background-color);
     color: #fff;
 }
 

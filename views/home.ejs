@@ -113,28 +113,28 @@
                             <div class="field">
                                 <label class="label has-text-centered has-text-grey-lighter">Email</label>
                                 <div class="control">
-                                    <input id="email" class="input is-rounded has-text-centered" type="email" placeholder="Email" required>
+                                    <input id="email" class="input is-rounded has-text-centered" type="email" placeholder="Email" name="email" required autocomplete="username">
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label has-text-centered has-text-grey-lighter">Contraseña</label>
-                                <div class="control has-icons-right" style="text-align: center;">
-                                    <input id="password" class="input is-rounded has-text-centered" type="password" placeholder="Contraseña" required autocomplete="current-password">
-                                    <span class="icon is-small is-right" onclick="togglePassword('password')" style="cursor: pointer;">
-                                        <i class="fas fa-eye"></i>
+                                <div class="control" style="text-align: center;">
+                                    <input id="password" class="input is-rounded has-text-centered" type="password" placeholder="Contraseña" name="password" required autocomplete="current-password">
+                                    <span class="icon is-small has-text-centered" onclick="togglePassword('password')">
+                                        <i class="fas fa-eye">view</i>
                                     </span>
                                 </div>
                             </div>
                             <div class="field" id="name-field" style="display: none;">
                                 <label class="label has-text-centered has-text-grey-lighter">Nombre</label>
                                 <div class="control">
-                                    <input id="name" class="input is-rounded has-text-centered" type="text" placeholder="Nombre" required>
+                                    <input id="name" class="input is-rounded has-text-centered" type="text" placeholder="Nombre" name="name">
                                 </div>
                             </div>
                             <div class="field" id="pin-field" style="display: none;">
                                 <label class="label has-text-centered has-text-grey-lighter">PIN</label>
                                 <div class="control">
-                                    <input id="pin" class="input is-rounded has-text-centered" type="text" placeholder="PIN" required>
+                                    <input id="pin" class="input is-rounded has-text-centered" type="text" placeholder="PIN" name="pin">
                                 </div>
                             </div>
                             <div class="field">
@@ -145,7 +145,7 @@
                             </div>
                             <div class="field">
                                 <div class="control has-text-centered">
-                                    <button type="submit" class="button is-info is-outlined is-responsive">Agregar</button>
+                                    <button type="submit" class="button is-info is-outlined">Agregar</button>
                                 </div>
                             </div>
                         </form>
@@ -154,11 +154,18 @@
             </div>
             <div class="column is-full is-pulled-right">
                 <h1 class="title has-text-centered has-text-grey-lighter">Servicios disponibles</h1>
-                <div id="data-container" class="data-list">
+                <div id="data-container">
                     <!-- Los datos se mostrarán aquí -->
                 </div>
             </div>
         </div>
+        <footer class="column is-full mb-5">
+            <div class="has-text-centered">
+                <p>
+                    <strong>Prototipo Web</strong> por <a href="#">Pineda</a>. Todos los derechos reservados.
+                </p>
+            </div>
+        </footer>
     </section>
 
     <!-- Modal para editar datos -->
@@ -185,10 +192,10 @@
                     </div>
                     <div class="field">
                         <label class="label">Contraseña</label>
-                        <div class="control has-icons-right" style="text-align: center;">
+                        <div class="control has-icons-right">
                             <input id="edit-password" class="input" type="password" placeholder="Contraseña" required autocomplete="current-password">
-                            <span class="icon is-small is-right" onclick="togglePassword('edit-password')" style="cursor: pointer;">
-                                <i class="fas fa-eye"></i>
+                            <span class="icon is-small has-text-centered" onclick="togglePassword('password')">
+                                <i class="fas fa-eye">view</i>
                             </span>
                         </div>
                     </div>
@@ -251,20 +258,28 @@
             const price = document.getElementById('price').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const name = document.getElementById('name').value;
-            const pin = document.getElementById('pin').value;
+            const name = type === 'profile' ? document.getElementById('name').value : null;
+            const pin = type === 'profile' ? document.getElementById('pin').value : null;
             const expiry_days = document.getElementById('expiry_days').value;
+
+            const body = { type, service, price, email, password, expiry_days };
+            if (type === 'profile') {
+                body.name = name;
+                body.pin = pin;
+            }
 
             const response = await fetch('/purchase', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ type, service, price, email, password, name, pin, expiry_days })
+                body: JSON.stringify(body)
             });
 
             if (response.ok) {
                 loadData();
+                document.getElementById('data-form').reset();
+                toggleFields(); // Reset fields visibility
             }
         });
 
@@ -273,22 +288,26 @@
             const data = await response.json();
             const dataContainer = document.getElementById('data-container');
             dataContainer.innerHTML = '';
-            data.forEach(item => {
-                const email = item.details.account ? item.details.account.email : item.details.profile.email;
-                const expiry_date = new Date(item.details.account ? item.details.account.expiry_date : item.details.profile.expiry_date);
-                const days_left = Math.ceil((expiry_date - new Date()) / (1000 * 60 * 60 * 24));
-                const dataItem = document.createElement('div');
-                dataItem.className = 'data-item';
-                dataItem.innerHTML = `
-                    <div class="data-item-content">
-                        <span class="data-text">${item.service} (${item.type}): ${email} - Expira en ${days_left} días</span>
-                        <div class="data-buttons">
-                            <button class="button is-small is-info" onclick="openEditModal('${item.purchase_id}', '${item.type}', ${days_left})">Editar</button>
-                            <button class="button is-small is-danger" onclick="deleteData('${item.purchase_id}')">Eliminar</button>
+            data
+                .filter(item => item.status === 'active')
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .forEach(item => {
+                    const email = item.details.account ? item.details.account.email : item.details.profile.email;
+                    const expiry_date = new Date(item.details.account ? item.details.account.expiry_date : item.details.profile.expiry_date);
+                    const days_left = Math.ceil((expiry_date - new Date()) / (1000 * 60 * 60 * 24));
+                    const dataItem = document.createElement('div');
+                    dataItem.className = 'data-item';
+                    dataItem.innerHTML = `
+                        <div class="data-item-content">
+                            <span class="data-text">${item.service} (${item.type}): ${email} - Expira en ${days_left} días</span>
+                            <div class="data-buttons">
+                                <button class="button is-small is-info" onclick="openEditModal('${item.purchase_id}', '${item.type}', ${days_left})">Editar</button>
+                                <button class="button is-small is-danger" onclick="deleteData('${item.purchase_id}')">Eliminar</button>
+                            </div>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                    dataContainer.appendChild(dataItem);
+                });
         }
 
         async function openEditModal(id, type, days_left) {
