@@ -21,6 +21,7 @@ const run = async () => {
     app.set('json spaces', 3)
         .set('view engine', 'ejs')
         .set('views', path.join(__dirname, 'views'))
+        .set('trust proxy', true)
         .engine('ejs', require('ejs').__express)
         .use(express.json())
         .use(ip.mw())
