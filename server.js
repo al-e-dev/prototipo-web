@@ -10,6 +10,7 @@ const mongoose = require('mongoose')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const crypto = require('crypto')
+const cloudflare = require('cloudflare-express')
 
 const PORT = process.env.PORT || 8080
 
@@ -34,6 +35,7 @@ const run = async () => {
             parameterLimit: 50000
         }))
         .use(express.static(path.join(__dirname, 'public')))
+        .use(cloudflare.restore())
         .use(session({
             secret: crypto.randomBytes(64).toString('hex'),
             resave: false,
