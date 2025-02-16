@@ -11,12 +11,13 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const crypto = require('crypto')
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 8080
 
 const run = async () => {
     mongoose.connect(`mongodb+srv://${process.env.MongoDbUser}:${process.env.MongoDbPassword}@serverdatadb.39fv13g.mongodb.net/nazi?retryWrites=true&w=majority&appName=ServerDataDB`)
         .catch(() => { process.exit() })
     const app = express()
+    morgan.token('clientIp', (req) => req.clientIp)
     app.set('json spaces', 3)
         .set('view engine', 'ejs')
         .set('views', path.join(__dirname, 'views'))
@@ -64,9 +65,9 @@ const run = async () => {
             font: 'console',
             align: 'center',
             colors: ['system']
-        });
-    });
-};
+        })
+    })
+}
 
 run().catch((err) => {
     console.error('Error al iniciar el servidor:', err)
