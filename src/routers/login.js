@@ -1,3 +1,5 @@
+const cloudflare = require('cloudflare-express');
+
 exports.routes = {
    category: 'main',
    path: '/login',
@@ -8,5 +10,6 @@ exports.routes = {
       }
       res.status(200).render("login");
    },
+   middleware: [cloudflare.restore()],
    error: false
 }
