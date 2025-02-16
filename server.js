@@ -12,7 +12,7 @@ const MongoStore = require('connect-mongo')
 const crypto = require('crypto')
 const cloudflare = require('cloudflare-express')
 
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 3000
 
 const run = async () => {
     mongoose.connect(`mongodb+srv://${process.env.MongoDbUser}:${process.env.MongoDbPassword}@serverdatadb.39fv13g.mongodb.net/nazi?retryWrites=true&w=majority&appName=ServerDataDB`)
