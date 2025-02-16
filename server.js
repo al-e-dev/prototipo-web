@@ -1,5 +1,5 @@
 require('./src/lib/system/config.js'),
-require('dotenv').config()
+    require('dotenv').config()
 const express = require('express')
 const path = require('path')
 const CFonts = require('cfonts')
@@ -44,13 +44,13 @@ const run = async () => {
                 mongoUrl: `mongodb+srv://${process.env.MongoDbUser}:${process.env.MongoDbPassword}@serverdatadb.39fv13g.mongodb.net/nazi?retryWrites=true&w=majority&appName=ServerDataDB`,
                 collectionName: 'sessions'
             }),
-            cookie: { secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 } 
+            cookie: { secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 }
         }))
         .use('/', await require('./src/handler.js'))
         .use((req, res, next) => {
             res.status(404).render("404")
         })
-    
+
     app.disable('x-powered-by')
     app.use((req, res, next) => {
         res.setHeader('X-Powered-By', 'NXR-SERVER')
@@ -58,15 +58,15 @@ const run = async () => {
     })
 
     app.listen(PORT, () => {
-        CFonts.say('Api Zioo', { 
-            font: 'tiny', 
-            align: 'center', 
-            colors: ['system'] 
+        CFonts.say('Api Zioo', {
+            font: 'tiny',
+            align: 'center',
+            colors: ['system']
         });
-        CFonts.say(`Database is connected\nServer listening on port ---> ${PORT}`, { 
-            font: 'console', 
-            align: 'center', 
-            colors: ['system'] 
+        CFonts.say(`Database is connected\nServer listening on port ---> ${PORT}`, {
+            font: 'console',
+            align: 'center',
+            colors: ['system']
         });
     });
 };
@@ -74,4 +74,4 @@ const run = async () => {
 run().catch((err) => {
     console.error('Error al iniciar el servidor:', err)
     process.exit(1)
-});
+})
