@@ -5,7 +5,7 @@ exports.routes = {
     execution: async (req, res) => {
         const clientIp = req.headers['cf-connecting-ip'] || req.clientIp;
         res.json({
-            ip: clientIp,
+            ip: req.ip,
             userAgent: req.headers['user-agent'],
             timestamp: new Date().toISOString()
         });
