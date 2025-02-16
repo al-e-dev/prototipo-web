@@ -10,7 +10,6 @@ const mongoose = require('mongoose')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const crypto = require('crypto')
-const cloudflare = require('cloudflare-express')
 
 const PORT = process.env.PORT || 3000
 
@@ -18,7 +17,6 @@ const run = async () => {
     mongoose.connect(`mongodb+srv://${process.env.MongoDbUser}:${process.env.MongoDbPassword}@serverdatadb.39fv13g.mongodb.net/nazi?retryWrites=true&w=majority&appName=ServerDataDB`)
         .catch(() => { process.exit() })
     const app = express()
-    morgan.token('clientIp', (req) => req.headers['cf-connecting-ip'] || req.clientIp)
     app.set('json spaces', 3)
         .set('view engine', 'ejs')
         .set('views', path.join(__dirname, 'views'))
@@ -35,7 +33,6 @@ const run = async () => {
             parameterLimit: 50000
         }))
         .use(express.static(path.join(__dirname, 'public')))
-        .use(cloudflare.restore())
         .use(session({
             secret: crypto.randomBytes(64).toString('hex'),
             resave: false,

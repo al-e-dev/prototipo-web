@@ -3,7 +3,6 @@ const { collection } = require('./lib/system/config')
 const path = require('path')
 const express = require('express')
 const router = express.Router()
-const cloudflare = require('cloudflare-express');
 
 const createRouter = async () => {
     try {
@@ -22,8 +21,7 @@ const createRouter = async () => {
                     example: route.example || null
                 },
                 error: route.error,
-                premium: route.premium,
-                middlewares: route.middleware || []
+                premium: route.premium
             })
 
             // error
@@ -57,8 +55,7 @@ const createRouter = async () => {
             })
 
             if (typeof router[route.method] === 'function') {
-                const middlewares = route.middlewares || [];
-                router[route.method.toLowerCase()](route.path, error, requires, validator, ...middlewares, route.execution)
+                router[route.method.toLowerCase()](route.path, error, requires, validator, route.execution)
             }
         })
         return router
