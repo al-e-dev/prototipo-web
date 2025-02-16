@@ -4,7 +4,7 @@ exports.routes = {
     method: 'get',
     execution: async (req, res) => {
         res.json({
-            ip: req.cf_ip,
+            ip: req.clientIp,
             userAgent: req.headers['user-agent'],
             timestamp: new Date().toISOString()
         });
