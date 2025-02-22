@@ -6,6 +6,39 @@
     <title>Inicio</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        :root {
+            --background-color: #1e1e1e;
+            --text-color: #ffffff;
+            --border-color: #ffffff;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Source Code Pro', monospace;
+            background-color: var(--background-color);
+            color: #fff;
+        }
+
+        .container {
+            width: 300px;
+            height: 400px;
+            border: 3px dashed #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: var(--background-color);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
         #welcome {
             font-size: 24px;
             margin-bottom: 20px;

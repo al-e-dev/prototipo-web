@@ -27,10 +27,8 @@ body {
     border-radius: 10px;
     padding: 20px;
     box-sizing: border-box;
-    background-color: #333;
     color: #fff;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;

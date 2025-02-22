@@ -10,6 +10,7 @@ const mongoose = require('mongoose')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const crypto = require('crypto')
+const helmet = require('helmet')
 
 const PORT = process.env.PORT || 3000
 
@@ -23,7 +24,24 @@ const run = async () => {
         .set('views', path.join(__dirname, 'views'))
         .set('trust proxy', true)
         .engine('ejs', require('ejs').__express)
+        .use(helmet({
+            contentSecurityPolicy: false, // Evita problemas con EJS y scripts en línea
+            frameguard: { action: 'deny' }, // Evita que el sitio sea embebido en iframes
+            xssFilter: true, // Protección contra XSS
+            noSniff: true, // Evita que el navegador intente adivinar el tipo de archivo
+            referrerPolicy: { policy: 'strict-origin-when-cross-origin' } // Configura la política de referencia
+        }))
         .use(express.json())
+        .use((req, res, next) => {
+            const clientIp = req.headers['x-forwarded-for']?.split(',')[0] || 
+                             req.connection.remoteAddress || 
+                             req.socket.remoteAddress || 
+                             (req.connection.socket ? req.connection.socket.remoteAddress : null)
+            
+            console.log('Client IP:', clientIp)
+            req.clientIp = clientIp
+            next()
+        })
         .use(ip.mw())
         .use(morgan(':clientIp :method :url :status :res[content-length] - :response-time ms'))
         .use(bodyParser.json({
